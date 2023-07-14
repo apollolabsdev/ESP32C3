@@ -1,5 +1,5 @@
 [package]
-name = "i2c"
+name = "rmt"
 version = "0.1.0"
 authors = ["apollolabsdev <104051566+apollolabsdev@users.noreply.github.com>"]
 edition = "2021"
@@ -14,4 +14,3 @@ esp-backtrace = { version = "0.7.0", features = [
     "print-uart",
 ] }
 esp-println = { version = "0.5.0", features = ["esp32c3"] }
-nobcd = "0.2.0"

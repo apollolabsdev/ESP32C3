@@ -11,7 +11,6 @@ use esp32c3_hal::{
     PulseControl, Rtc, IO,
 };
 use esp_backtrace as _;
-use esp_println::println;
 
 #[entry]
 fn main() -> ! {
@@ -44,7 +43,7 @@ fn main() -> ! {
     // Instantiate and Create Handle for IO
     let io = IO::new(peripherals.GPIO, peripherals.IO_MUX);
 
-    // Configure RMT peripheral globally
+    // Configure RMT peripheral
     let pulse = PulseControl::new(
         peripherals.RMT,
         &mut system.peripheral_clock_control,
@@ -77,21 +76,28 @@ fn main() -> ! {
     let mut rmt_channel1 = rmt_channel1.assign_pin(io.pins.gpio5);
 
     // Create pulse sequence
-    let mut seq = [PulseCode {
+    let seq = [PulseCode {
+        level1: true,
+        length1: 10u32.nanos(),
+        level2: false,
+        length2: 90u32.nanos(),
+    }; 3];
+
+    let seq1 = [PulseCode {
         level1: true,
         length1: 50u32.nanos(),
         level2: false,
-        length2: 90u32.nanos(),
-    }; 288];
+        length2: 50u32.nanos(),
+    }; 3];
+
+    rmt_channel0
+        .send_pulse_sequence(RepeatMode::SingleShot, &seq)
+        .unwrap();
+
+    rmt_channel1
+        .send_pulse_sequence(RepeatMode::SingleShot, &seq1)
+        .unwrap();
 
     // Application Loop
-    loop {
-        // Send sequence
-        rmt_channel0
-            .send_pulse_sequence(RepeatMode::SingleShot, &seq)
-            .unwrap();
-        rmt_channel1
-            .send_pulse_sequence(RepeatMode::SingleShot, &seq)
-            .unwrap();
-    }
+    loop {}
 }
