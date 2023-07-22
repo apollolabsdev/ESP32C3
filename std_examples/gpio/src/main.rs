@@ -24,6 +24,20 @@ fn main() {
     let mut led9 = PinDriver::output(dp.pins.gpio8).unwrap();
     let mut led10 = PinDriver::output(dp.pins.gpio9).unwrap();
 
+    // Config Option 2 (Optimized Appraoch)
+    // let mut leds = [
+    //     PinDriver::output(dp.pins.gpio1.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio10.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio19.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio18.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio4.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio5.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio6.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio7.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio8.downgrade_output()).unwrap(),
+    //     PinDriver::output(dp.pins.gpio9.downgrade_output()).unwrap(),
+    // ];
+
     // Configure Button pin to input with Pull Up
     let mut button = PinDriver::input(dp.pins.gpio3).unwrap();
     button.set_pull(Pull::Up).unwrap();
@@ -111,6 +125,15 @@ fn main() {
         FreeRtos::delay_ms(blinkdelay);
         led10.set_low().unwrap();
         FreeRtos::delay_ms(100_u32);
+
+        // Algo Option 2 (Optimized Approach)
+        // for mut led in &mut leds {
+        //     led.set_high().unwrap();
+        //     blinkdelay = button_pressed(&button, &blinkdelay);
+        //     FreeRtos::delay_ms(blinkdelay);
+        //     led.set_low().unwrap();
+        //     FreeRtos::delay_ms(100_u32);
+        // }
     }
 }
 
