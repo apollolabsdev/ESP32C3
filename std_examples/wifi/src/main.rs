@@ -41,7 +41,6 @@ fn main() -> anyhow::Result<()> {
 
     // Confirm Wifi Connection
     while !wifi.is_connected().unwrap() {
-        // Get and print connection configuration
         let config = wifi.get_configuration().unwrap();
         println!("Waiting for station {:?}", config);
     }
