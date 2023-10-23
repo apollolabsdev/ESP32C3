@@ -6,7 +6,7 @@ GitHub Repo containing source code and other examples:
 https://github.com/apollolabsdev
 
 For notifications on similar examples and more, subscribe to newsletter here:
-https://subscribepage.io/apollolabsnewsletter
+https://www.theembeddedrustacean.com/subscribe
 */
 
 use anyhow;
