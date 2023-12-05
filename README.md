@@ -1,6 +1,7 @@
 # Rust Project Examples and Templates for the ESP32C3
 
 This repository contains example projects that can also be used as templates written in the Rust programming language targeting the ESP32C3 by Espressif.
+ESP32C3 is a single-core Wi-Fi and Bluetooth 5 (LE) microcontroller SoC, based on the open-source RISC-V architecture. 
 
 Each of these these projects has an accompanying blog post explaining the code in more detail [here](https://apollolabsblog.hashnode.dev/). Each project also has an accompnaying Wokwi simulation.
 
