@@ -1,3 +1,14 @@
+/*
+For a detailed explanation of this code check out the associated blog post:
+https://apollolabsblog.hashnode.dev/embassy-on-esp-uart-transmitter
+
+GitHub Repo containing source code and other examples:
+https://github.com/apollolabsdev
+
+For notifications on similar examples and more, subscribe to newsletter here:
+https://www.theembeddedrustacean.com/subscribe
+*/
+
 #![no_std]
 #![no_main]
 #![feature(type_alias_impl_trait)]
