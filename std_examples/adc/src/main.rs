@@ -11,6 +11,7 @@ https://subscribepage.io/apollolabsnewsletter
 
 use esp_idf_sys::{self as _}; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
 
+use esp_idf_hal::adc::attenuation::adc_atten_t_ADC_ATTEN_DB_11;
 use esp_idf_hal::adc::config::Config;
 use esp_idf_hal::adc::*;
 use esp_idf_hal::gpio::Gpio4;
@@ -24,8 +25,11 @@ fn main() -> anyhow::Result<()> {
     let mut adc = AdcDriver::new(peripherals.adc1, &Config::new()).unwrap();
 
     // Configure ADC Channel
-    let mut adc_pin: esp_idf_hal::adc::AdcChannelDriver<'_, Gpio4, Atten11dB<_>> =
-        AdcChannelDriver::new(peripherals.pins.gpio4).unwrap();
+    let mut adc_pin: esp_idf_hal::adc::AdcChannelDriver<
+        '_,
+        { adc_atten_t_ADC_ATTEN_DB_11 },
+        Gpio4,
+    > = AdcChannelDriver::new(peripherals.pins.gpio4).unwrap();
 
     const B: f64 = 3950.0; // B value of the thermistor
     const VMAX: f64 = 2500.0; // Full Range Voltage

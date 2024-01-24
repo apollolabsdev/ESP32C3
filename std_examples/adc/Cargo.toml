@@ -38,7 +38,7 @@ experimental = ["embedded-svc?/experimental", "esp-idf-svc?/experimental"]
 embassy = [
     "esp-idf-hal?/embassy-sync",
     "esp-idf-hal?/critical-section",
-    "esp-idf-hal?/edge-executor",
+    # "esp-idf-hal?/edge-executor",
     "esp-idf-svc?/embassy-time-driver",
     "esp-idf-svc?/embassy-time-isr-queue",
 ]
@@ -46,9 +46,9 @@ embassy = [
 [dependencies]
 log = { version = "0.4.17", default-features = false }
 esp-idf-sys = { version = "0.33", default-features = false }
-esp-idf-hal = { version = "0.41", optional = true, default-features = false }
-esp-idf-svc = { version = "0.46", optional = true, default-features = false }
-embedded-svc = { version = "0.25", optional = true, default-features = false }
+esp-idf-hal = { version = "0.42", optional = true, default-features = false }
+esp-idf-svc = { version = "0.47.3", optional = true, default-features = false }
+embedded-svc = { version = "0.26.4", optional = true, default-features = false }
 libm = "0.2.7"
 anyhow = "1.0.75"
 
