@@ -1,16 +1,24 @@
-use anyhow;
-use embedded_svc::http::client::Client;
-use embedded_svc::wifi::{AuthMethod, ClientConfiguration, Configuration};
+/*
+For a detailed explanation of this code check out the associated blog post:
+https://apollolabsblog.hashnode.dev/esp32-embedded-rust-ping
+
+GitHub Repo containing source code and other examples:
+https://github.com/apollolabsdev
+
+For notifications on similar examples and more, subscribe to newsletter here:
+https://www.theembeddedrustacean.com/subscribe
+*/
+
 use esp_idf_hal::peripherals::Peripherals;
 use esp_idf_svc::eventloop::EspSystemEventLoop;
-use esp_idf_svc::http::client::{Configuration as HttpConfig, EspHttpConnection};
+use esp_idf_svc::ipv4::Ipv4Addr;
 use esp_idf_svc::nvs::EspDefaultNvsPartition;
-use esp_idf_svc::wifi::{BlockingWifi, EspWifi};
+use esp_idf_svc::ping::{Configuration as PingConfiguration, EspPing};
+use esp_idf_svc::wifi::{AuthMethod, BlockingWifi, ClientConfiguration, Configuration, EspWifi};
+use std::str::FromStr;
 
 fn main() -> anyhow::Result<()> {
-    esp_idf_sys::link_patches();
-
-    // Configure Wifi
+    // Take Peripherals
     let peripherals = Peripherals::take().unwrap();
     let sysloop = EspSystemEventLoop::take()?;
     let nvs = EspDefaultNvsPartition::take()?;
@@ -28,6 +36,8 @@ fn main() -> anyhow::Result<()> {
         channel: None,
     }))?;
 
+    println!("Connecting to WiFi");
+
     // Start Wifi
     wifi.start()?;
 
@@ -37,59 +47,27 @@ fn main() -> anyhow::Result<()> {
     // Wait until the network interface is up
     wifi.wait_netif_up()?;
 
-    // Print Out Wifi Connection Configuration
-    while !wifi.is_connected().unwrap() {
-        // Get and print connection configuration
-        let config = wifi.get_configuration().unwrap();
-        println!("Waiting for station {:?}", config);
+    // This line is for Wokwi only so that the console output is formatted correctly
+    println!("\x1b[20h");
+
+    println!("Wifi Connected");
+
+    println!("Pinging Google DNS (8.8.8.8)");
+
+    let mut ping = EspPing::new(0_u32);
+
+    let ping_res = ping.ping(
+        Ipv4Addr::from_str("8.8.8.8").unwrap(),
+        &PingConfiguration::default(),
+    );
+
+    match ping_res {
+        Ok(summary) => println!(
+            "Transmitted: {}, Recieved: {} Time: {:?}",
+            summary.transmitted, summary.received, summary.time
+        ),
+        Err(e) => println!("{:?}", e),
     }
 
-    println!("Wifi Connected, Intiatlizing HTTP");
-
-    // HTTP Configuration
-    // Create HTTPS Connection Handle
-    let httpconnection = EspHttpConnection::new(&HttpConfig {
-        use_global_ca_store: true,
-        crt_bundle_attach: Some(esp_idf_sys::esp_crt_bundle_attach),
-        ..Default::default()
-    })?;
-
-    // Create HTTPS Client
-    let mut httpclient = Client::wrap(httpconnection);
-
-    // HTTP Request Submission
-    // Define URL
-    let url = "https://httpbin.org/get";
-
-    // Prepare request
-    let request = httpclient.get(url)?;
-
-    // Log URL and type of request
-    println!("-> GET {}", url);
-
-    // Submit Request and Store Response
-    let response = request.submit()?;
-
-    // HTTP Response Processing
-    let status = response.status();
-    println!("<- {}", status);
-
-    match response.header("Content-Length") {
-        Some(data) => {
-            println!("Content-Length: {}", data);
-        }
-        None => {
-            println!("No Content-Length Header");
-        }
-    }
-    match response.header("Date") {
-        Some(data) => {
-            println!("Date: {}", data);
-        }
-        None => {
-            println!("No Date Header");
-        }
-    }
-
-    Ok(())
+    loop {}
 }
