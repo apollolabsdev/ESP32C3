@@ -1,6 +1,6 @@
 /*
 For a detailed explanation of this code check out the associated blog post:
-https://apollolabsblog.hashnode.dev/esp32-embedded-rust-ping-cli-app
+https://apollolabsblog.hashnode.dev/esp-embedded-rust-ping-cli-app-part-1
 
 GitHub Repo containing source code and other examples:
 https://github.com/apollolabsdev
@@ -14,7 +14,6 @@ use esp_idf_hal::gpio;
 use esp_idf_hal::prelude::*;
 use esp_idf_hal::uart::*;
 use esp_idf_svc::eventloop::EspSystemEventLoop;
-// use esp_idf_svc::ipv4::Ipv4Addr;
 use esp_idf_svc::nvs::EspDefaultNvsPartition;
 use esp_idf_svc::ping::{Configuration as PingConfiguration, EspPing, Summary};
 use esp_idf_svc::wifi::{AuthMethod, BlockingWifi, ClientConfiguration, Configuration, EspWifi};
