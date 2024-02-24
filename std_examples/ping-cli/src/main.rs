@@ -1,6 +1,7 @@
 /*
-For a detailed explanation of this code check out the associated blog post:
-https://apollolabsblog.hashnode.dev/esp-embedded-rust-ping-cli-app-part-1
+For a detailed explanation of this code check out the associated blog posts:
+https://apollolabsblog.hashnode.dev/esp32-embedded-rust-ping-cli-app-part-1
+https://apollolabsblog.hashnode.dev/esp32-embedded-rust-ping-cli-app-part-2
 
 GitHub Repo containing source code and other examples:
 https://github.com/apollolabsdev
@@ -202,10 +203,13 @@ fn ping_app<'a>(
     // Setup Default Ping Config
     let mut ping_config = PingConfiguration::default();
 
-    // Obtain CLI Options and Modify Default Accordingly
+    // Obtain CLI Options and Modify Default Configuration Accordingly
+    ping_config.count = 1;
+    let mut ping_attempts = 4;
+
     match argument_finder(item, args, "count") {
         Ok(arg) => match arg {
-            Some(cnt) => ping_config.count = FromStr::from_str(cnt).unwrap(),
+            Some(cnt) => ping_attempts = FromStr::from_str(cnt).unwrap(),
             None => (),
         },
         Err(_) => (),
@@ -244,27 +248,31 @@ fn ping_app<'a>(
     writeln!(
         context,
         "Pinging {} [{:?}] with {} bytes of data\n",
-        ip_str, addr, ping_config.count
+        ip_str, addr, ping_config.data_size
     )
     .unwrap();
 
     let mut summary = Summary::default();
     let mut times: Vec<u128> = Vec::new();
+    let mut rx_count = 0;
 
     // Ping 4 times and print results in following format:
     // Reply from {IP}: bytes={summary.recieved} time={summary.time} TTL={summary.timeout}
-    for _n in 1..=ping_config.count {
+    for _n in 1..=ping_attempts {
         summary = ping.ping(addr, &ping_config).unwrap();
 
         writeln!(
             context,
             "Reply from {:?}: bytes = {}, time = {:?}, TTL = {:?}",
-            addr, summary.received, summary.time, ping_config.timeout
+            addr, ping_config.data_size, summary.time, ping_config.timeout
         )
         .unwrap();
 
         // Update values for statistics
         times.push(summary.time.as_millis());
+        if summary.transmitted == summary.received {
+            rx_count += 1;
+        }
     }
 
     // Print ping statstics in following format:
@@ -276,10 +284,10 @@ fn ping_app<'a>(
     writeln!(
         context,
         "     Packets: Sent = {}, Recieved  = {}, Lost = {} <{}% loss>",
-        summary.transmitted,
-        summary.received,
-        summary.transmitted - summary.received,
-        ((summary.transmitted - summary.received) / summary.transmitted) * 100
+        ping_attempts,
+        rx_count,
+        ping_attempts - rx_count,
+        ((ping_attempts - rx_count) / ping_attempts) * 100
     )
     .unwrap();
     writeln!(context, "Approximate round trip times in milliseconds:").unwrap();
