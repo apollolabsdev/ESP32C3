@@ -189,6 +189,7 @@ fn ping_app<'a>(
         .next()
         .unwrap();
 
+    // Convert to IP v4 type address
     let addr = match addresses {
         std::net::SocketAddr::V4(a) => *a.ip(),
         std::net::SocketAddr::V6(_) => {
